@@ -1,0 +1,23 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Placeholder</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/page.css') }}">
+</head>
+
+<body>
+    <h1>{{ user + "'" if user.endswith('s') else user + "'s" }} Posts</h1>
+
+    {% if user == loggedInUser %}
+    <form method="GET" action="/upload">
+        <button type="submit">Create New Post</button>
+    </form>
+    {% endif %}
+
+    {% for post_id in post_ids %}
+    <form action="/{{ user }}/post/{{ post_id }}" method="get">
+        <button class="button" type="submit">Post {{ post_id }}</button>
+    </form>
+    {% endfor %}
+</body>
