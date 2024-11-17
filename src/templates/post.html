@@ -9,4 +9,9 @@
 <body>
     <img src="/post{{postId}}.avif" width="500" height="auto"/>
     {{ description }}
+    {% if user == loggedInUser %}
+    <form method="POST" action="/{{user}}/post/{{postId}}">
+        <button type="submit">Delete Post</button>
+    </form>
+    {% endif %}
 </body>

@@ -4,7 +4,7 @@
 ### Features
 - The user can create a new account or log in: Done
 - The user can change their username and profile picture: Not implemented
-- Users can post & delete images: Users can post images but they can't be deleted
+- Users can post & delete images: Done
 - Users can favorite other users' pages: Not implemented
 - Users can attach a caption/description to their images: Done
 - Users can comment on posts: Not implemented

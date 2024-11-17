@@ -76,10 +76,16 @@ def page(user):
     posts = getPostsByUser(user)
     return render_template("page.html", user=user, loggedInUser = session["username"], post_ids = posts)
 
-@app.route("/<string:user>/post/<int:postId>")
+@app.route("/<string:user>/post/<int:postId>", methods=["GET", "POST"])
 def post(user, postId):
-    description = getDescription(postId)
-    return render_template("post.html", postId=postId, description=description)
+
+    loggedInUser = session["username"]
+    if request.method == "POST" and user == loggedInUser:
+        deletePost(postId)
+        return redirect(f"/{user}")
+    else:
+        description = getDescription(postId)
+        return render_template("post.html", postId=postId, description=description, loggedInUser=loggedInUser, user=user)
 
 @app.route('/post<int:postId>.avif') #dynamic image url
 def postImage(postId):
@@ -181,6 +187,11 @@ def checkCredentials(user: str, pwd: str) -> bool:
         return False
     hashedPwd: str = result[0]
     return bcrypt.checkpw(pwd.encode(), hashedPwd.encode())
+
+
+def deletePost(postId: int) -> None:
+    db.session.execute(text("DELETE FROM posts WHERE id = :postId"), {"postId": postId})
+    db.session.commit()
 
 
 def getImageResolution(file: bytes) -> tuple[int, int] | None: # I know there's much easier ways to do this but I wanna support extracting the first frame of a video 
