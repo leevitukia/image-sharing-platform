@@ -78,7 +78,6 @@ def page(user):
 
 @app.route("/<string:user>/post/<int:postId>", methods=["GET", "POST"])
 def post(user, postId):
-
     loggedInUser = session["username"]
     if request.method == "POST" and user == loggedInUser:
         deletePost(postId)
@@ -138,7 +137,7 @@ def processImage(image: FileStorage) -> bytes | None: # encodes an image to the 
         return None
     
     process = subprocess.Popen(
-        f"ffmpeg -hide_banner -loglevel error -i - -an -frames:v 1 -c:v libaom-av1 -cpu-used 5 -still-picture 1 -pix_fmt yuv444p -aom-params aq-mode=1:enable-chroma-deltaq=1 -crf 30 -f avif {tempFile}".split(" "), 
+        f"ffmpeg -hide_banner -loglevel error -i - -an -frames:v 1 -c:v libaom-av1 -cpu-used 5 -still-picture 1 -aom-params aq-mode=1:enable-chroma-deltaq=1 -crf 30 -f avif {tempFile}".split(" "), 
         stdin=subprocess.PIPE,
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
