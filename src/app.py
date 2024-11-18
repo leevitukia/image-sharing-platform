@@ -25,6 +25,7 @@ db = SQLAlchemy(app)
 def index():
     if("username" in session):
         if(checkIfUserExists(session["username"])):
+            getFavorites(session["username"])
             return render_template("indexLoggedIn.html", user=session["username"])
         else:
             del session["username"]
@@ -69,12 +70,36 @@ def logout():
     del session["username"]
     return redirect("/")
 
-@app.route("/<string:user>")
+@app.route("/<string:user>", methods=["GET", "POST"])
 def page(user):
     if(not checkIfUserExists(user)):
         return "This user doesn't exist"
     posts = getPostsByUser(user)
-    return render_template("page.html", user=user, loggedInUser = session["username"], post_ids = posts)
+    loggedInUser = session["username"]
+
+    favorites = getFavorites(loggedInUser)
+    isFavorited = user in favorites
+    if(request.method == "POST"):
+        if(isFavorited):
+            removeFromFavorites(loggedInUser, user)
+        else:
+            addToFavorites(loggedInUser, user)
+        isFavorited = not isFavorited
+
+    return render_template("page.html", user=user, loggedInUser = loggedInUser, post_ids = posts, favorited = isFavorited)
+
+
+@app.route("/<string:user>/favorites")
+def favorites(user):
+    loggedInUser = session["username"]
+    if(not checkIfUserExists(user)):
+        return "This user doesn't exist"
+    if(user != loggedInUser):
+        return "Access Denied"
+    
+    users = getFavorites(user)
+    return render_template("favorites.html", users = users, user = user)
+
 
 @app.route("/<string:user>/post/<int:postId>", methods=["GET", "POST"])
 def post(user, postId):
@@ -161,7 +186,6 @@ def processImage(image: FileStorage) -> bytes | None: # encodes an image to the 
 def getPostsByUser(username: str) -> list[int]:
     userId: int = getUserID(username)
     result = db.session.execute(text("SELECT id FROM posts WHERE user_id = :user_id"),{"user_id": userId}).scalars().fetchall()
-    print(result)
     return result
 
 def getImage(postId: int) -> bytes | None:
@@ -187,9 +211,22 @@ def checkCredentials(user: str, pwd: str) -> bool:
     hashedPwd: str = result[0]
     return bcrypt.checkpw(pwd.encode(), hashedPwd.encode())
 
+def getFavorites(user: str) -> list[str]:
+    result = db.session.execute(text("SELECT favorites FROM users WHERE username = :username LIMIT 1"),{"username": user}).scalar()
+    return [] if result == None else result
 
 def deletePost(postId: int) -> None:
     db.session.execute(text("DELETE FROM posts WHERE id = :postId"), {"postId": postId})
+    db.session.commit()
+
+def addToFavorites(user: str, userToAdd: str) -> None:
+    sql = text("UPDATE users SET favorites = array_append(COALESCE(favorites, '{}'), :userToAdd) WHERE username = :username")
+    db.session.execute(sql, {"userToAdd": userToAdd, "username": user})
+    db.session.commit()
+
+def removeFromFavorites(user: str, userToRemove: str) -> None:
+    sql = text("UPDATE users SET favorites = array_remove(COALESCE(favorites, '{}'), :userToRemove) WHERE username = :username")
+    db.session.execute(sql, {"userToRemove": userToRemove, "username": user})
     db.session.commit()
 
 

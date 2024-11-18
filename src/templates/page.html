@@ -15,6 +15,12 @@
     </form>
     {% endif %}
 
+    {% if user != loggedInUser %}
+    <form method="POST" action="/{{user}}">
+        <button type="submit">{{ "Remove user from favorites" if favorited else "Add user to favorites" }}</button>
+    </form>
+    {% endif %}
+
     {% for post_id in post_ids %}
     <form action="/{{ user }}/post/{{ post_id }}" method="get">
         <button class="button" type="submit">Post {{ post_id }}</button>

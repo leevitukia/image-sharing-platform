@@ -5,7 +5,7 @@
 - The user can create a new account or log in: Done
 - The user can change their username and profile picture: Not implemented
 - Users can post & delete images: Done
-- Users can favorite other users' pages: Not implemented
+- Users can favorite other users' pages: Done
 - Users can attach a caption/description to their images: Done
 - Users can comment on posts: Not implemented
 - Users can message other users: Not implemented
