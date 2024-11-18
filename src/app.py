@@ -23,12 +23,10 @@ db = SQLAlchemy(app)
 
 @app.route("/")
 def index():
-    if("username" in session):
-        if(checkIfUserExists(session["username"])):
-            return render_template("indexLoggedIn.html", user=session["username"])
-        else:
-            del session["username"]
-    return render_template("index.html")
+    if("username" in session and not checkIfUserExists(session["username"])):
+        del session["username"]
+    loggedInUser = session["username"] if "username" in session else None
+    return render_template("index.html", user=loggedInUser)
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
