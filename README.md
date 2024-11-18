@@ -10,6 +10,7 @@
 - Users can comment on posts: Not implemented
 - Users can message other users: Not implemented
 - Users can like posts: Not implemented
+- Good looking UI: absolutely not done
 
 ###  How to test the app
 1. Clone the repo
