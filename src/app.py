@@ -25,7 +25,6 @@ db = SQLAlchemy(app)
 def index():
     if("username" in session):
         if(checkIfUserExists(session["username"])):
-            getFavorites(session["username"])
             return render_template("indexLoggedIn.html", user=session["username"])
         else:
             del session["username"]
