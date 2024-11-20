@@ -158,8 +158,26 @@ def processImage(image: FileStorage) -> bytes | None: # encodes an image to the 
     if(resolution == None or resolution[0] > 8192 or resolution[1] > 8192):
         return None
     
+
+    cropFilter: str = ""
+
+    if(resolution[0] > resolution[1]):
+        cropFilter = f" -vf crop=ih:ih:{(resolution[0] - resolution[1]) / 2}:0"
+    elif(resolution[1] > resolution[0]):
+        cropFilter = f" -vf crop=iw:iw:0:{(resolution[1] - resolution[0]) / 2}"
+
+
+    resolutionFilter: str = ""
+    if(resolution[0] > 4096 or resolution[1] > 4096):
+        if(resolution[0] > resolution[1]):
+            resolutionFilter = f"-vf scale=4096:-2:flags=lanczos"
+        else:
+            resolutionFilter = f"-vf scale=-2:4096:flags=lanczos"
+
+    
+
     process = subprocess.Popen(
-        f"ffmpeg -hide_banner -loglevel error -i - -an -frames:v 1 -c:v libaom-av1 -cpu-used 5 -still-picture 1 -aom-params aq-mode=1:enable-chroma-deltaq=1 -crf 30 -f avif {tempFile}".split(" "), 
+        f"ffmpeg -hide_banner -loglevel error -i - -an -frames:v 1 {resolutionFilter} -c:v libaom-av1 -cpu-used 5 -still-picture 1 -aom-params aq-mode=1:enable-chroma-deltaq=1 -crf 30 -f avif {tempFile}".split(" "), 
         stdin=subprocess.PIPE,
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
