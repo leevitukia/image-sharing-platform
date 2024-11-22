@@ -177,7 +177,7 @@ def processImage(image: FileStorage) -> bytes | None: # encodes an image to the 
     
 
     process = subprocess.Popen(
-        f"ffmpeg -hide_banner -loglevel error -i - -an -frames:v 1 {resolutionFilter} -c:v libaom-av1 -cpu-used 5 -still-picture 1 -aom-params aq-mode=1:enable-chroma-deltaq=1 -crf 30 -f avif {tempFile}".split(" "), 
+        f"ffmpeg -hide_banner -loglevel error -i pipe: -an -frames:v 1 {resolutionFilter} -c:v libaom-av1 -cpu-used 5 -still-picture 1 -aom-params aq-mode=1:enable-chroma-deltaq=1 -crf 30 -f avif {tempFile}", 
         stdin=subprocess.PIPE,
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
@@ -247,7 +247,7 @@ def removeFromFavorites(user: str, userToRemove: str) -> None:
 
 def getImageResolution(file: bytes) -> tuple[int, int] | None: # I know there's much easier ways to do this but I wanna support extracting the first frame of a video 
     process = subprocess.Popen(
-        f"ffmpeg -hide_banner -i -".split(" "), 
+        f"ffmpeg -hide_banner -i pipe:", 
         stdin=subprocess.PIPE,
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
