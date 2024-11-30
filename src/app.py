@@ -4,7 +4,7 @@ from sqlalchemy import text
 import bcrypt
 import io
 from config import app, db
-from db_methods import checkCredentials, checkIfUserExists, getDescription, addToFavorites, removeFromFavorites, deletePost, getFavorites, getPostsByUser, getImage, createAccount, addPostToDB
+from db_methods import checkCredentials, checkIfUserExists, getThumbnail, getDescription, addToFavorites, removeFromFavorites, deletePost, getFavorites, getPostsByUser, getImage, createAccount, addPostToDB
 from image_processing import processImage, createThumbnail
 from flask_sqlalchemy import SQLAlchemy
 
@@ -101,6 +101,13 @@ def postImage(postId):
         return ""
     return send_file(io.BytesIO(image), "image/avif", download_name=f"{postId}.avif")
 
+@app.route('/thumb<int:postId>.avif')
+def thumbnail(postId):
+    image = getThumbnail(postId)
+    if(image == None):
+        return ""
+    return send_file(io.BytesIO(image), "image/avif", download_name=f"thumb{postId}.avif")
+
 
 @app.route("/upload", methods=["GET", "POST"])
 def upload():
@@ -109,14 +116,13 @@ def upload():
             flash('No file')
             return redirect(request.url)
         file = request.files['file']
+        imgBytes: bytes = file.stream.read()
 
-        avifImage: bytes = processImage(file)
+        avifImage: bytes = processImage(imgBytes)
         if(avifImage == None):
             flash('Invalid file')
             return redirect(request.url)
-        
-        thumbnail = createThumbnail(file)
-
+        thumbnail = createThumbnail(imgBytes)
         description = request.form["description"]
         username = session["username"]
 
@@ -124,6 +130,10 @@ def upload():
         postId = result.scalar()
         return redirect(f"/{username}/post/{postId}")
     return render_template("upload.html")
+
+@app.route("/settings", methods=["GET"])
+def settings():
+    return "hi"
 
 def hash_password(pwd: str) -> str:
     salt = bcrypt.gensalt()
