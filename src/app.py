@@ -3,13 +3,11 @@ from os import getenv
 from sqlalchemy import text
 import bcrypt
 import io
+from config import app, db
 from db_methods import checkCredentials, checkIfUserExists, getDescription, addToFavorites, removeFromFavorites, deletePost, getFavorites, getPostsByUser, getImage, createAccount, addPostToDB
-from image_processing import processImage
+from image_processing import processImage, createThumbnail
+from flask_sqlalchemy import SQLAlchemy
 
-app = Flask(__name__)
-app.config["SQLALCHEMY_DATABASE_URI"] = getenv("DATABASE_URL")
-app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-app.secret_key = getenv("FLASK_SECRET_KEY")
 
 @app.route("/")
 def index():
@@ -101,7 +99,6 @@ def postImage(postId):
     image = getImage(postId)
     if(image == None):
         return ""
-    
     return send_file(io.BytesIO(image), "image/avif", download_name=f"{postId}.avif")
 
 
@@ -114,14 +111,16 @@ def upload():
         file = request.files['file']
 
         avifImage: bytes = processImage(file)
-        
         if(avifImage == None):
             flash('Invalid file')
             return redirect(request.url)
+        
+        thumbnail = createThumbnail(file)
+
         description = request.form["description"]
         username = session["username"]
 
-        result = addPostToDB()
+        result = addPostToDB(username, description, avifImage, thumbnail)
         postId = result.scalar()
         return redirect(f"/{username}/post/{postId}")
     return render_template("upload.html")

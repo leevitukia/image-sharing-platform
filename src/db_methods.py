@@ -1,10 +1,8 @@
 from sqlalchemy import text, Result
 from flask_sqlalchemy import SQLAlchemy
-from app import app
+from config import db
 import bcrypt
 import datetime
-
-db = SQLAlchemy(app)
 
 def getUserID(username: str) -> int:
     result = db.session.execute(text("SELECT id FROM users WHERE username = :username LIMIT 1"),{"username": username}).fetchone()
@@ -12,14 +10,21 @@ def getUserID(username: str) -> int:
         return -1
     return result[0]
 
-
 def getPostsByUser(username: str) -> list[int]:
     userId: int = getUserID(username)
     result = db.session.execute(text("SELECT id FROM posts WHERE user_id = :user_id"),{"user_id": userId}).scalars().fetchall()
     return result
 
 def getImage(postId: int) -> bytes | None:
-    result = db.session.execute(text("SELECT attached_image FROM posts WHERE id = :id LIMIT 1"),{"id": postId}).fetchone()
+    imageId = db.session.execute(text("SELECT images FROM posts WHERE id = :id LIMIT 1"),{"id": postId}).scalar()
+    result = db.session.execute(text("SELECT attached_image FROM images WHERE id = :id LIMIT 1"),{"id": imageId}).fetchone()
+    if(result == None):
+        return None
+    return result[0]
+
+def getThumbnail(postId: int) -> bytes | None:
+    imageId = db.session.execute(text("SELECT images FROM posts WHERE id = :id LIMIT 1"),{"id": postId}).scalar()
+    result = db.session.execute(text("SELECT thumbnail FROM images WHERE id = :id LIMIT 1"),{"id": imageId}).fetchone()
     if(result == None):
         return None
     return result[0]
@@ -64,8 +69,11 @@ def createAccount(username: str, hashedPwd: str) -> None:
     db.session.execute(sql, {"username": username, "password": hashedPwd})
     db.session.commit()
 
-def addPostToDB(username: str, description: str, attachedImage: bytes):
-    sql = text("INSERT INTO posts (content, attached_image, user_id, sent_at) VALUES (:description, :attached_image, :user_id, :sent_at) RETURNING id;")
-    result = db.session.execute(sql, {"description": description, "attached_image": attachedImage, "user_id": getUserID(username), "sent_at": datetime.datetime.utcnow()})
+def addPostToDB(username: str, description: str, attachedImage: bytes, thumbnail: bytes):
+    imgSql = text("INSERT INTO images (attached_image, thumbnail) VALUES (:attached_image, :thumbnail) RETURNING id;")
+    imageId = db.session.execute(imgSql, {"attached_image": attachedImage, "thumbnail": thumbnail}).scalar()
+
+    sql = text("INSERT INTO posts (content, images, user_id) VALUES (:description, :images, :user_id) RETURNING id;")
+    result = db.session.execute(sql, {"description": description, "images": imageId, "user_id": getUserID(username)})
     db.session.commit()
     return result
