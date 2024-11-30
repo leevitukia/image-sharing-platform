@@ -1,0 +1,38 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Account Settings</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/settings.css') }}">
+</head>
+
+<body>
+    <form method="POST" action="/settings" enctype=multipart/form-data>
+
+        <label for="file">Profile Picture
+            <br><img src="/{{username}}.avif" class="upload" id="imagePreview" width="64" height="auto">
+        </label><br>
+        <input type="file" id="file" name="file">
+
+        <label for="username">Username</label><br>
+        <input type="text" id="username" name="username" value="{{username}}" required><br>
+        
+        <button type="submit">Save Changes</button>
+    </form>
+</body>
+
+
+<script>
+    document.getElementById('file').addEventListener('change', function(event) {
+    const file = event.target.files[0];
+    const preview = document.getElementById('imagePreview');
+    
+    if (file) {
+        const reader = new FileReader(); 
+        reader.onload = function(e) {
+            preview.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+    }
+});
+</script>

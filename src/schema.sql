@@ -8,7 +8,8 @@ CREATE TABLE users (
     id SERIAL PRIMARY KEY,
     username TEXT UNIQUE,
     password TEXT,
-    favorites TEXT ARRAY
+    favorites INT ARRAY,
+    profilePicture BYTEA
 );
 
 CREATE TABLE posts (

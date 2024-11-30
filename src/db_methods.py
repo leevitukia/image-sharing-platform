@@ -1,11 +1,15 @@
-from sqlalchemy import text, Result
-from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import text
 from config import db
 import bcrypt
-import datetime
 
 def getUserID(username: str) -> int:
     result = db.session.execute(text("SELECT id FROM users WHERE username = :username LIMIT 1"),{"username": username}).fetchone()
+    if result == None:
+        return -1
+    return result[0]
+
+def getUsername(userId: int) -> str:
+    result = db.session.execute(text("SELECT username FROM users WHERE id = :id LIMIT 1"),{"id": userId}).fetchone()
     if result == None:
         return -1
     return result[0]
@@ -35,8 +39,12 @@ def getDescription(postId: int) -> str | None:
         return None
     return result[0]
 
-def checkIfUserExists(username: str) -> bool:
+def checkIfUsernameExists(username: str) -> bool:
     result = db.session.execute(text("SELECT 1 FROM users WHERE username = :username LIMIT 1"),{"username": username})
+    return result.fetchone() != None
+
+def checkIfUserIDExists(userId: int) -> bool:
+    result = db.session.execute(text("SELECT 1 FROM users WHERE id = :id LIMIT 1"),{"id": userId})
     return result.fetchone() != None
 
 def checkCredentials(user: str, pwd: str) -> bool:
@@ -56,24 +64,46 @@ def deletePost(postId: int) -> None:
 
 def addToFavorites(user: str, userToAdd: str) -> None:
     sql = text("UPDATE users SET favorites = array_append(COALESCE(favorites, '{}'), :userToAdd) WHERE username = :username")
-    db.session.execute(sql, {"userToAdd": userToAdd, "username": user})
+    db.session.execute(sql, {"userToAdd": getUserID(userToAdd), "username": user})
     db.session.commit()
 
 def removeFromFavorites(user: str, userToRemove: str) -> None:
     sql = text("UPDATE users SET favorites = array_remove(COALESCE(favorites, '{}'), :userToRemove) WHERE username = :username")
-    db.session.execute(sql, {"userToRemove": userToRemove, "username": user})
+    db.session.execute(sql, {"userToRemove": getUserID(userToRemove), "username": user})
     db.session.commit()
 
 def createAccount(username: str, hashedPwd: str) -> None:
-    sql = text("INSERT INTO users (username, password) VALUES (:username, :password);")
-    db.session.execute(sql, {"username": username, "password": hashedPwd})
+    sql = text("INSERT INTO users (username, password, profilePicture) VALUES (:username, :password, :pfp) RETURNING id;")
+    defaultPfp: bytes = None
+    with open("static/defaultPfp.avif", "rb") as file:
+        defaultPfp = file.read()
+    result = db.session.execute(sql, {"username": username, "password": hashedPwd, "pfp": defaultPfp})
     db.session.commit()
+    return result.scalar()
 
-def addPostToDB(username: str, description: str, attachedImage: bytes, thumbnail: bytes):
+def getPfp(username: str) -> bytes:
+    result = db.session.execute(text("SELECT profilePicture FROM users WHERE username = :username LIMIT 1"),{"username": username})
+    if(result == None):
+        return None
+    return result.scalar()
+
+def addPostToDB(userId: int, description: str, attachedImage: bytes, thumbnail: bytes):
     imgSql = text("INSERT INTO images (attached_image, thumbnail) VALUES (:attached_image, :thumbnail) RETURNING id;")
     imageId = db.session.execute(imgSql, {"attached_image": attachedImage, "thumbnail": thumbnail}).scalar()
 
     sql = text("INSERT INTO posts (content, images, user_id) VALUES (:description, :images, :user_id) RETURNING id;")
-    result = db.session.execute(sql, {"description": description, "images": imageId, "user_id": getUserID(username)})
+    result = db.session.execute(sql, {"description": description, "images": imageId, "user_id": userId})
     db.session.commit()
     return result
+
+def changeUsername(userId: int, newUsername: str) -> None:
+    sql = text("UPDATE users SET username = :newUsername WHERE id = :id")
+    db.session.execute(sql, {"newUsername": newUsername, "id": userId})
+    db.session.commit()
+
+def changeProfilePicture(userId: int, pfp: bytes) -> None:
+    if(type(pfp) == type(None)):
+        return
+    sql = text("UPDATE users SET profilePicture = :pfp WHERE id = :id")
+    db.session.execute(sql, {"pfp": pfp, "id": userId})
+    db.session.commit()

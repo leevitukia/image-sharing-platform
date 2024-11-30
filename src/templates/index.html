@@ -10,7 +10,6 @@
 
 <body>
     <div class="buttons">
-
         {% if user == None %}
             <form action="/login" method="get">
                 <button class="button" type="submit">Login</button>
@@ -31,6 +30,11 @@
             <form action="/{{user}}/favorites" method="get">
                 <button class="button" type="submit">Favorited Users</button>
             </form>
+
+            <form action="/settings" method="get">
+                <button class="button" type="submit">Account Settings</button>
+            </form>
+
         {% endif %}
     </div>
 </body>
