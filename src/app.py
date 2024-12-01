@@ -160,9 +160,10 @@ def settings():
 
         if("file" in request.files):
             file = request.files['file']
-            imgBytes: bytes = file.stream.read()
-            newPfp = createThumbnail(imgBytes)
-            changeProfilePicture(userId, newPfp)
+            if(file.filename != ''):
+                imgBytes: bytes = file.stream.read()
+                newPfp = createThumbnail(imgBytes)
+                changeProfilePicture(userId, newPfp)
 
         return redirect("/settings")
     
