@@ -13,9 +13,9 @@
 - Users can like posts: Not implemented
 - Good looking UI: absolutely not done
 
-###  How to test the app
+###  How to test the app (Tested on Ubuntu 24.04)
 1. Clone the repo
-2. Create a Python 3.10 environment
+2. Create and activate a Python 3.12 environment (3.10 works as well)
 3. Install the required packages with `pip install -r requirements.txt`
 4. Create a PostgreSQL database
 5. Create a .env file in the src directory with DATABASE_URL and FLASK_SECRET_KEY filled out.
@@ -24,5 +24,6 @@
    FLASK_SECRET_KEY=secret_key
    ```
 7. Apply the schema to the database you created with `psql -d db_name -f "schema.sql"` or another method.
-8. Install FFmpeg and make sure that it's accessible through the terminal. Haven't tested this on other operating systems but on Windows placing the executable in the src directory is enough.
-9. Start a local server with `flask run`
+8. Install FFmpeg and make sure that it's accessible through the terminal. `sudo apt install ffmpeg`  (If you're using Windows make sure that it's accessible via PATH)
+9. cd to the 'src' directory
+10. Start a local server by running `python index.py`
