@@ -11,30 +11,20 @@
 <body>
     <div class="buttons">
         {% if user == None %}
-            <form action="/login" method="get">
-                <button class="button" type="submit">Login</button>
-                </form>
-
-            <form action="/signup" method="get">
-                <button class="button" type="submit">Create Account</button>
-                </form>
+            <a href="/login" class="button">Login</a>
+            <a href="/signup" class="button">Create Account</a>
         {% else %}
-            <form action="/logout" method="get">
-                <button class="button" type="submit">Log Out</button>
-            </form>
+            <a href="/search" class="button">Search</a>
 
-            <form action="/{{user}}" method="get">
-                <button class="button" type="submit">My Posts</button>
-            </form>
+            <a href="/user/{{user}}" class="button">My Posts</a>
 
-            <form action="/{{user}}/favorites" method="get">
-                <button class="button" type="submit">Favorited Users</button>
-            </form>
+            <a href="/messages" class="button">DMs</a>
 
-            <form action="/settings" method="get">
-                <button class="button" type="submit">Account Settings</button>
-            </form>
+            <a href="/favorites" class="button">Favorited Users</a>
 
+            <a href="/settings" class="button">Account Settings</a>
+
+            <a href="/logout" class="button">Log Out</a>
         {% endif %}
     </div>
 </body>

@@ -3,12 +3,13 @@
 
 ### Features
 - The user can create a new account or log in: Done
-- The user can change their username and profile picture: Not implemented
+- The user can change their username and profile picture: Done
 - Users can post & delete images: Done
+- Users can search for other users: Done
 - Users can favorite other users' pages: Done
 - Users can attach a caption/description to their images: Done
-- Users can comment on posts: Not implemented
-- Users can message other users: Not implemented
+- Users can comment on posts: Done
+- Users can message other users: Done
 - Users can like posts: Not implemented
 - Good looking UI: absolutely not done
 

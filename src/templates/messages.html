@@ -1,0 +1,24 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/messages.css') }}">
+</head>
+
+<body>
+    <a href="/" class="button home">Home</a>
+    
+    <h1>Messages</h1>
+    <div class="users">
+        {% for user in messagedUsers %}
+        <div class="user">
+            <a href="/messages/{{user}}" class="button">
+                <img src="/pfp/{{user}}.avif" width="48" height="auto"/>
+                {{user}}
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+
+</body>

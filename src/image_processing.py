@@ -13,14 +13,12 @@ def processImage(image: bytes) -> bytes | None: # encodes an image to the AVIF f
         return None
     
     resolutionFilter: str = ""
-    if(resolution[0] > 4096 or resolution[1] > 4096):
-        if(resolution[0] > resolution[1]):
-            resolutionFilter = f"-vf scale=4096:-2:flags=lanczos"
-        else:
-            resolutionFilter = f"-vf scale=-2:4096:flags=lanczos"
+    if(resolution[0] > 4096 or resolution[1] > 4096): # https://ffmpeg.org/ffmpeg-utils.html#Expression-Evaluation
+        resolutionFilter = f"-vf \"scale='if(gt(iw, ih), 4096, -1)':'if(gt(ih, iw), 4096, -1)':flags=lanczos\""
+
 
     process = subprocess.Popen(
-        f"ffmpeg -hide_banner -loglevel error -i pipe: -an -frames:v 1 {resolutionFilter} -c:v libaom-av1 -cpu-used 5 -still-picture 1 -aom-params aq-mode=1:enable-chroma-deltaq=1 -crf 30 -f avif {tempFile}", 
+        f"ffmpeg -hide_banner -loglevel error -i pipe: -an -frames:v 1 {resolutionFilter} -c:v libaom-av1 -cpu-used 5 -still-picture 1 -aom-params aq-mode=1:enable-chroma-deltaq=1 -map_metadata -1 -map 0:v -crf 30 -f avif {tempFile}", 
         stdin=subprocess.PIPE,
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
@@ -48,13 +46,11 @@ def createThumbnail(image: bytes) -> bytes | None:
     
     cropFilter: str = ""
 
-    if(resolution[0] > resolution[1]):
-        cropFilter = f" -vf \"crop=ih:ih:{(resolution[0] - resolution[1]) / 2}:0, scale='min(256,iw)':-2:flags=lanczos\""
-    elif(resolution[1] > resolution[0]):
-        cropFilter = f" -vf \"crop=iw:iw:0:{(resolution[1] - resolution[0]) / 2}, scale='min(256,iw)':-2:flags=lanczos\""    
+    if(resolution[0] != resolution[1]): # https://ffmpeg.org/ffmpeg-utils.html#Expression-Evaluation
+        cropFilter = f" -vf \"crop='if(gt(iw, ih), ih, iw)':'if(gt(iw, ih), ih, iw)':'if(gt(iw, ih), round((iw - ih)/2))':'if(gt(ih, iw), round((ih - iw)/2))', scale='min(256,iw)':-2:flags=lanczos\""
 
     process = subprocess.Popen(
-        f"ffmpeg -hide_banner -loglevel error -i pipe: -an -frames:v 1 {cropFilter} -c:v libaom-av1 -cpu-used 5 -still-picture 1 -aom-params aq-mode=1:enable-chroma-deltaq=1 -crf 30 -f avif {tempFile}", 
+        f"ffmpeg -hide_banner -loglevel error -i pipe: -an -frames:v 1 {cropFilter} -c:v libaom-av1 -cpu-used 5 -still-picture 1 -aom-params aq-mode=1:enable-chroma-deltaq=1 -map_metadata -1 -map 0:v -crf 30 -f avif {tempFile}", 
         stdin=subprocess.PIPE,
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
@@ -74,7 +70,7 @@ def createThumbnail(image: bytes) -> bytes | None:
     return file_data
 
     
-def getImageResolution(file: bytes) -> tuple[int, int] | None: # I know there's much easier ways to do this but I wanna support extracting the first frame of a video 
+def getImageResolution(file: bytes) -> tuple[int, int] | None:
     process = subprocess.Popen(
         f"ffmpeg -hide_banner -i pipe:", 
         stdin=subprocess.PIPE,
@@ -82,13 +78,15 @@ def getImageResolution(file: bytes) -> tuple[int, int] | None: # I know there's 
         stderr=subprocess.PIPE,
         shell=True
     )
+
     stdout, stderr = process.communicate(input=file)
 
-    pattern = r'(\d+)x(\d+)'
-    match = re.search(pattern, stderr.decode().strip())
+    pattern = r' (\d+)x(\d+)'
 
-    if match:
-        width, height = match.groups()
+    lastMatch = list(re.finditer(pattern, stderr.decode().strip()))[-1]
+
+    if lastMatch:
+        width, height = lastMatch.groups()
         return (int(width), int(height))
     else:
         return None

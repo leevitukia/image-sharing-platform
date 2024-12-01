@@ -1,0 +1,30 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/search.css') }}">
+</head>
+
+
+<body>
+
+    <a href="/" class="button home">Home</a>
+
+    <form method="POST" action="/search">
+        <input type="text" id="query" name="query" value="{{ query if query != None }}">
+        <button type="submit">Search</button>
+    </form>
+
+    <div class="users">
+        {% for user in users %}
+        <div class="user">
+            <a href="/user/{{user}}" class="button">
+                <img src="/pfp/{{user}}.avif" width="48" height="auto"/>
+                {{user}}
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+    
+</body>

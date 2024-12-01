@@ -7,23 +7,26 @@
 </head>
 
 <body>
-    <h1>{{ user + "'" if user.endswith('s') else user + "'s" }} Posts</h1>
+    <a href="/" class="button home">Home</a>
+
+    <h1><img src="/pfp/{{user}}.avif" width="32" height="auto"/>{{ user + "'" if user.endswith('s') else user + "'s" }} Posts</h1>
 
     {% if user == loggedInUser %}
-    <form method="GET" action="/upload">
-        <button type="submit">Create New Post</button>
-    </form>
+    <a href="/upload" class="button">Create New Post</a>
     {% endif %}
 
     {% if user != loggedInUser %}
-    <form method="POST" action="/{{user}}">
+    <a href="/messages/{{user}}" class="button">Message</a>
+    <form method="POST" action="/user/{{user}}">
         <button type="submit">{{ "Remove user from favorites" if favorited else "Add user to favorites" }}</button>
     </form>
-    {% endif %}
 
-    {% for post_id in post_ids %}
-    <form action="/{{ user }}/post/{{ post_id }}" method="get">
-        <button class="button" type="submit">Post {{ post_id }}</button>
-    </form>
-    {% endfor %}
+    {% endif %}
+        <div class="posts">
+            {% for postId in post_ids|reverse %}
+                <a href="/user/{{ user }}/post/{{ postId }}" class="button post">
+                    <img src="/thumb/{{postId}}.avif" alt="" width="192" height=auto>
+                </a>
+            {% endfor %}
+        </div>
 </body>

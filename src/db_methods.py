@@ -56,9 +56,12 @@ def checkCredentials(user: str, pwd: str) -> bool:
 
 def getFavorites(user: str) -> list[str]:
     result = db.session.execute(text("SELECT favorites FROM users WHERE username = :username LIMIT 1"),{"username": user}).scalar()
-    return [] if result == None else result
+    if(result == None):
+        return []
+    return [getUsername(u) for u in result]
 
 def deletePost(postId: int) -> None:
+    db.session.execute(text("DELETE FROM comments WHERE post = :postId"), {"postId": postId})
     db.session.execute(text("DELETE FROM posts WHERE id = :postId"), {"postId": postId})
     db.session.commit()
 
@@ -107,3 +110,41 @@ def changeProfilePicture(userId: int, pfp: bytes) -> None:
     sql = text("UPDATE users SET profilePicture = :pfp WHERE id = :id")
     db.session.execute(sql, {"pfp": pfp, "id": userId})
     db.session.commit()
+
+def findUsers(query: str):
+    modifiedQuery = f"{query.replace('%', '')}%"
+    result = db.session.execute(text("SELECT username FROM users WHERE username iLIKE :query LIMIT 50"),{"query": modifiedQuery}).scalars()
+    return [] if result == None else result
+
+def sendMessage(message: str, fromUser: int, toUser: int):
+    sql = text("INSERT INTO messages (content, sent_by, sent_to) VALUES (:content, :sent_by, :sent_to);")
+    db.session.execute(sql, {"content": message, "sent_by": fromUser, "sent_to": toUser})
+    db.session.commit()
+
+def getMessages(user1: int, user2: int):
+    sql = text("SELECT content, sent_by, sent_to, sent_at FROM messages WHERE (sent_by = :user1 AND sent_to = :user2) OR (sent_to = :user1 AND sent_by = :user2) ORDER BY sent_at ASC")
+    result = db.session.execute(sql,{"user1": user1, "user2": user2}).fetchall()
+    return [] if result == None else result
+
+def getMessagedUsers(userId: int):
+    sql = text("SELECT DISTINCT sent_by, sent_to FROM messages WHERE sent_by = :userId OR sent_to = :userId")
+    result = db.session.execute(sql,{"userId": userId}).all()
+    returnVal = {getUsername(x) for y in result for x in y if x != userId}
+    return returnVal
+        
+def getComments(postId: int):
+    sql = text("SELECT content, user_id, sent_at FROM comments WHERE post = :post ORDER BY sent_at ASC")
+    result = db.session.execute(sql,{"post": postId}).fetchall()
+    if(result == None):
+        return []
+    return [{"content": comment.content, "username": getUsername(comment.user_id), "sent_at": comment.sent_at} for comment in result]
+    
+def addComment(comment: str, userId: int, postId: int):
+    sql = text("INSERT INTO comments (content, post, user_id) VALUES (:content, :post, :user_id);")
+    db.session.execute(sql, {"content": comment, "post": postId, "user_id": userId})
+    db.session.commit()
+
+def checkIfPostExists(postId: int, userId: int) -> bool:
+    sql = text("SELECT 1 FROM posts WHERE id = :id AND user_id = :user_id LIMIT 1")
+    result = db.session.execute(sql,{"id": postId, "user_id": userId}).fetchall()
+    return len(result) != 0

@@ -4,19 +4,59 @@ body {
     align-items: center;
     flex-direction: column;
     font-family: Arial, sans-serif;
-    background-color: #121119;
+    background-color: hsl(248 19 8);
     margin: 0; 
-    color: white;
-    margin-top: 20px;
+    margin-top: 10px;
 }
 
-.post{
-    display: flex;  
+
+.messages::-webkit-scrollbar {
+    display: none;
+}
+
+.messages{
+    overflow-y: auto;
+    height: 80vh;
+
+    -ms-overflow-style: none; 
+    scrollbar-width: none; 
+
+    width: 400px;
+    max-width: 100%;
+    padding: 20px;
+    background-color: hsl(248 19 18);
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    display: flex;
     flex-direction: column;
+    gap: 10px;
+
+}
+
+.recipient{
+    background-color: #e4e6eb;
+    align-self: flex-start;
+}
+
+.sender{
+    background-color: #0066ff;
+    color: white;
+    align-self: flex-end;
+}
+
+.message{
+    padding: 10px;
+    border-radius: 10px;
+    max-width: 80%;
+    font-size: 16px;
+    word-wrap: break-word;
 }
 
 .user{
+    display: flex;
+    flex-direction: row;
     font-size: 30;
+    margin-bottom: 20px ;
 }
 
 .user a{
@@ -25,38 +65,6 @@ body {
 }
 
 .user a:hover{
-    color: hsl(0 0 80);
-}
-
-.commentsBox::-webkit-scrollbar {
-    display: none;
-}
-
-.commentsBox{
-    overflow-y: auto;
-    -ms-overflow-style: none; 
-    scrollbar-width: none; 
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    max-height: 50vh;
-    margin-left: 40px;
-    margin-top: 40px;
-}
-
-.comment{
-    display: flex;  
-    flex-direction: column;
-    gap: 5px;
-}
-
-.comment a{
-    color: white;
-    text-decoration: inherit;
-}
-
-
-.comment a:hover{
     color: hsl(0 0 80);
 }
 
@@ -82,14 +90,4 @@ body {
 .home:hover{
     background-color: #1e66d2;
     transform: scale(1.025);
-}
-
-.postImg{
-    max-width: 60vw;
-    max-height: 60vh;
-}
-
-.postContainer{
-    display: flex;  
-    flex-direction: row;
 }

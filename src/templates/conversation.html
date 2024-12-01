@@ -1,0 +1,38 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/conversation.css') }}">
+</head>
+
+<body>
+
+    <a href="/" class="button home">Home</a>
+
+    <div class="user">
+        <a href="/user/{{userName}}" class="button">
+            <img src="/pfp/{{userName}}.avif" width="48" height="auto"/>
+            {{userName}}
+        </a>
+    </div>
+    <div id="messages" class="messages">
+        {% for message in messages %}
+        <div class="message {{"recipient" if recipient == message.sent_by else "sender"}}">
+            {{ message.content }}
+        </div>
+        {% endfor %}
+    </div>
+    
+    <div class="send">
+        <form method="POST" action="/messages/{{recipient}}">
+            <input type="text" id="msgBox" name="msgBox" value="" required="true">
+            <button type="submit">Send</button>
+        </form>
+    </div>
+</body>
+
+<script>
+    let element = document.getElementById("messages");    
+    element.scrollTo(0, element.scrollHeight);
+</script>
