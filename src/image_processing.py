@@ -44,13 +44,15 @@ def createThumbnail(image: bytes) -> bytes | None:
     if(resolution == None or resolution[0] > 8192 or resolution[1] > 8192):
         return None
     
-    cropFilter: str = ""
+    filters: str = ""
 
     if(resolution[0] != resolution[1]): # https://ffmpeg.org/ffmpeg-utils.html#Expression-Evaluation
-        cropFilter = f" -vf \"crop='if(gt(iw, ih), ih, iw)':'if(gt(iw, ih), ih, iw)':'if(gt(iw, ih), round((iw - ih)/2))':'if(gt(ih, iw), round((ih - iw)/2))', scale='min(256,iw)':-2:flags=lanczos\""
+        filters = f" -vf \"crop='if(gt(iw, ih), ih, iw)':'if(gt(iw, ih), ih, iw)':'if(gt(iw, ih), round((iw - ih)/2))':'if(gt(ih, iw), round((ih - iw)/2))', scale='min(256,iw)':-1:flags=lanczos\""
+    else:
+        filters = f" -vf \"scale='min(256,iw)':-1:flags=lanczos\""
 
     process = subprocess.Popen(
-        f"ffmpeg -hide_banner -loglevel error -i pipe: -an -frames:v 1 {cropFilter} -c:v libaom-av1 -cpu-used 5 -still-picture 1 -aom-params aq-mode=1:enable-chroma-deltaq=1 -map_metadata -1 -map 0:v -crf 30 -f avif {tempFile}", 
+        f"ffmpeg -hide_banner -loglevel error -i pipe: -an -frames:v 1 {filters} -c:v libaom-av1 -cpu-used 5 -still-picture 1 -aom-params aq-mode=1:enable-chroma-deltaq=1 -map_metadata -1 -map 0:v -crf 30 -f avif {tempFile}", 
         stdin=subprocess.PIPE,
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
