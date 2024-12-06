@@ -55,10 +55,11 @@ def checkCredentials(user: str, pwd: str) -> bool:
     return bcrypt.checkpw(pwd.encode(), hashedPwd.encode())
 
 def getFavorites(user: str) -> list[str]:
-    result = db.session.execute(text("SELECT favorites FROM users WHERE username = :username LIMIT 1"),{"username": user}).scalar()
+    sql = text("SELECT username FROM users WHERE id IN (SELECT unnest(favorites) FROM users WHERE username = :username)")
+    result = db.session.execute(sql, {"username": user}).scalars().all()
     if(result == None):
         return []
-    return [getUsername(u) for u in result]
+    return result
 
 def deletePost(postId: int) -> None:
     db.session.execute(text("DELETE FROM comments WHERE post = :postId"), {"postId": postId})
@@ -127,10 +128,9 @@ def getMessages(user1: int, user2: int):
     return [] if result == None else result
 
 def getMessagedUsers(userId: int):
-    sql = text("SELECT DISTINCT sent_by, sent_to FROM messages WHERE sent_by = :userId OR sent_to = :userId")
-    result = db.session.execute(sql,{"userId": userId}).all()
-    returnVal = {getUsername(x) for y in result for x in y if x != userId}
-    return returnVal
+    sql = text("SELECT username FROM users WHERE id IN (SELECT DISTINCT sent_to FROM messages WHERE sent_by = :userId) OR id IN (SELECT DISTINCT sent_by FROM messages WHERE sent_to = :userId)")
+    result = db.session.execute(sql, {"userId": userId}).scalars().all()
+    return result
         
 def getComments(postId: int):
     sql = text("SELECT content, user_id, sent_at FROM comments WHERE post = :post ORDER BY sent_at ASC")
