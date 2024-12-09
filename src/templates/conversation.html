@@ -27,6 +27,7 @@
     <div class="send">
         <form method="POST" action="/messages/{{recipient}}">
             <input type="text" id="msgBox" name="msgBox" value="" required="true">
+            <input type="hidden" id="csrf" name="csrf" value="{{session.csrf}}">
             <button type="submit">Send</button>
         </form>
     </div>

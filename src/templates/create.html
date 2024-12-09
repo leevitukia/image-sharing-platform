@@ -8,15 +8,24 @@
 
 <body>
     <h1>Create a new account</h1>
-    <form method="POST" action="/signup">
-        <label for="username">Username:</label><br>
-        <input type="text" id="username" name="username" required><br>
+    <div>
+      <form method="POST" action="/signup">
+        <div class="field">
+          <label for="username">Username</label>
+          <input type="text" class="inputfield" id="username" name="username" required>
+        </div>
+        <div class="field">
+          <label for="pwd">Password</label>
+          <input type="password" class="inputfield" id="pwd" name="pwd" required>
+        </div>
         
-        <label for="pwd">Password:</label><br>
-        <input type="password" id="pwd" name="pwd" required><br>
+        <div class="button-container">
+          <button class="button" type="submit">Create Account</button>
+        </div>
         
-        <button type="submit">Create Account</button>
     </form>
+    </div>
+    
 
     {% with messages = get_flashed_messages(with_categories=true) %}
       {% if messages %}

@@ -18,13 +18,14 @@
     {% if user != loggedInUser %}
     <a href="/messages/{{user}}" class="button">Message</a>
     <form method="POST" action="/user/{{user}}">
+        <input type="hidden" id="csrf" name="csrf" value="{{session.csrf}}">
         <button type="submit">{{ "Remove user from favorites" if favorited else "Add user to favorites" }}</button>
     </form>
 
     {% endif %}
         <div class="posts">
             {% for postId in post_ids|reverse %}
-                <a href="/user/{{ user }}/post/{{ postId }}" class="button post">
+                <a href="/user/{{ user }}/post/{{ postId }}" class="post">
                     <img src="/thumb/{{postId}}.avif" alt="" width="192" height=auto>
                 </a>
             {% endfor %}

@@ -7,16 +7,19 @@
 </head>
 
 <body>
+
+    <a href="/" class="home">Home</a>
+
     <form method="POST" action="/upload" enctype=multipart/form-data>
 
-        <label for="file">Image:</label><br>
+        <label for="file">Image</label><br>
         <input type="file" id="file" name="file" required><br>
 
-        <label for="description">Description:</label><br>
+        <label for="description">Description</label><br>
         <input type="text" id="description" name="description" required><br>
+        <input type="hidden" id="csrf" name="csrf" value="{{session.csrf}}">
 
-
-        <button type="submit">Upload</button>
+        <button class="button" type="submit">Upload</button>
     </form>
 
     File Guidelines

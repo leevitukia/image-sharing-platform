@@ -3,11 +3,12 @@ import io
 from config import app
 from db_methods import *
 from image_processing import processImage, createThumbnail
+import secrets
 
 @app.route("/")
 def index():
     if("userId" in session and not checkIfUserIDExists(session["userId"])):
-        del session["userId"]
+        return logout()
     loggedInUser = getUsername(session["userId"]) if "userId" in session else None
     return render_template("index.html", user=loggedInUser)
 
@@ -18,6 +19,7 @@ def login():
         password = request.form["pwd"]
         if(checkCredentials(username, password)):
             session["userId"] = getUserID(username)
+            session["csrf"] = secrets.token_hex(16)
             return redirect("/")
         else:
             flash("Incorrect password or username", "danger")
@@ -37,6 +39,7 @@ def signup():
         
         userId = createAccount(username, password)
         session["userId"] = userId
+        session["csrf"] = secrets.token_hex(16)
         return redirect("/")
     
     return render_template("create.html")
@@ -44,6 +47,7 @@ def signup():
 @app.route("/logout", methods=["GET"])
 def logout():
     del session["userId"]
+    del session["csrf"]
     return redirect("/")
 
 @app.route("/user/<string:user>", methods=["GET", "POST"])
@@ -55,7 +59,7 @@ def page(user):
 
     favorites = getFavorites(loggedInUser)
     isFavorited = user in favorites
-    if(request.method == "POST"):
+    if(request.method == "POST" and validateCsrfToken(request.form)):
         if(isFavorited):
             removeFromFavorites(loggedInUser, user)
         else:
@@ -81,7 +85,7 @@ def post(user, postId):
         return redirect(f"/user/{user}")
 
     loggedInUser = getUsername(session["userId"])
-    if request.method == "POST":
+    if request.method == "POST" and validateCsrfToken(request.form):
         if("delete" in request.form and user == loggedInUser):
             deletePost(postId)
             return redirect(f"/user/{user}")
@@ -116,7 +120,7 @@ def pfp(username):
 
 @app.route("/upload", methods=["GET", "POST"])
 def upload():
-    if request.method == "POST" and checkIfUserIDExists(session["userId"]):
+    if request.method == "POST" and checkIfUserIDExists(session["userId"]) and validateCsrfToken(request.form):
         if 'file' not in request.files:
             flash('No file')
             return redirect(request.url)
@@ -146,7 +150,7 @@ def settings():
 
     if(request.method == "GET"):
         return render_template("settings.html", username=username)
-    elif(request.method == "POST"):
+    elif(request.method == "POST" and validateCsrfToken(request.form)):
         newUsername = request.form["username"]
         if(newUsername != username and not checkIfUsernameExists(newUsername)):
             changeUsername(userId, newUsername)
@@ -188,7 +192,7 @@ def conversation(recipientUserId: str):
         return redirect("/")
     recipientUsername: str = getUsername(recipientUserId)
 
-    if(request.method == "POST"):
+    if(request.method == "POST" and validateCsrfToken(request.form)):
         message = request.form["msgBox"]
         sendMessage(message, userId, recipientUserId)
         return redirect(f"/messages/{recipientUserId}")
@@ -201,3 +205,10 @@ def conversation(recipientUserId: str):
 def conversationRedirect(username: str):
     userId = getUserID(username)
     return redirect(f"/messages/{userId}")
+
+
+def validateCsrfToken(form: dict) -> bool:
+    csrf = form.get("csrf")
+    if(csrf != None and csrf == session["csrf"]):
+        return True
+    return False

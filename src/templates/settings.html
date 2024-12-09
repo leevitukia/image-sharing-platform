@@ -8,19 +8,23 @@
 
 <body>
 
-    <a href="/" class="button home">Home</a>
+    <a href="/" class="home">Home</a>
 
     <form method="POST" action="/settings" enctype=multipart/form-data>
-
-        <label for="file">Profile Picture
-            <br><img src="/pfp/{{username}}.avif" class="upload" id="imagePreview" width="64" height="auto">
-        </label><br>
-        <input type="file" id="file" name="file">
-
-        <label for="username">Username</label><br>
-        <input type="text" id="username" name="username" value="{{username}}" required><br>
-        
-        <button type="submit">Save Changes</button>
+        <div class="field">
+            <label class="field" for="file">Profile Picture
+                <img src="/pfp/{{username}}.avif" class="upload" id="imagePreview" width="64" height="auto">
+            </label>
+            
+            <input type="file" id="file" name="file">
+        </div>
+    
+        <div class="field">
+            <label for="username">Username</label>
+            <input class="inputfield" type="text" id="username" name="username" value="{{username}}" required>
+        </div>
+        <input type="hidden" id="csrf" name="csrf" value="{{session.csrf}}">
+        <button class="button" type="submit">Save Changes</button>
     </form>
 </body>
 
