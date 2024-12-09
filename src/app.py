@@ -1,13 +1,8 @@
 from flask import Flask, flash, redirect, render_template, request, session, send_file
-from os import getenv
-from sqlalchemy import text
-import bcrypt
 import io
-from config import app, db
+from config import app
 from db_methods import *
 from image_processing import processImage, createThumbnail
-from flask_sqlalchemy import SQLAlchemy
-
 
 @app.route("/")
 def index():
@@ -36,13 +31,11 @@ def signup():
         username = request.form["username"]
         password = request.form["pwd"]
 
-        hashed_password = hash_password(password)
-
         if(checkIfUsernameExists(username)):
             flash("Username already taken, please choose a different one.", "danger")
             return redirect("/signup")
         
-        userId = createAccount(username, hashed_password)
+        userId = createAccount(username, password)
         session["userId"] = userId
         return redirect("/")
     
@@ -208,8 +201,3 @@ def conversation(recipientUserId: str):
 def conversationRedirect(username: str):
     userId = getUserID(username)
     return redirect(f"/messages/{userId}")
-    
-def hash_password(pwd: str) -> str:
-    salt = bcrypt.gensalt()
-    hashedPwd = bcrypt.hashpw(pwd.encode(), salt).decode()
-    return hashedPwd

@@ -76,14 +76,23 @@ def removeFromFavorites(user: str, userToRemove: str) -> None:
     db.session.execute(sql, {"userToRemove": getUserID(userToRemove), "username": user})
     db.session.commit()
 
-def createAccount(username: str, hashedPwd: str) -> None:
+def createAccount(username: str, password: str) -> None:
     sql = text("INSERT INTO users (username, password, profilePicture) VALUES (:username, :password, :pfp) RETURNING id;")
     defaultPfp: bytes = None
     with open("static/defaultPfp.avif", "rb") as file:
         defaultPfp = file.read()
+
+    hashedPwd = hash_password(password)
+    
     result = db.session.execute(sql, {"username": username, "password": hashedPwd, "pfp": defaultPfp})
     db.session.commit()
     return result.scalar()
+
+def hash_password(pwd: str) -> str:
+    salt = bcrypt.gensalt()
+    hashedPwd = bcrypt.hashpw(pwd.encode(), salt).decode()
+    return hashedPwd
+
 
 def getPfp(username: str) -> bytes:
     result = db.session.execute(text("SELECT profilePicture FROM users WHERE username = :username LIMIT 1"),{"username": username})
