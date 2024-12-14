@@ -16,6 +16,7 @@ body {
     margin: 0;
     gap: 10px
 }
+
 .user{
     font-size: 30;
 }
@@ -30,7 +31,7 @@ body {
 }
 
 .home {
-    background-color: #1870f4;
+    background-color: hsl(216 91 53);
     border: 0px;
     color: white;
     font-weight: bold;
@@ -49,6 +50,39 @@ body {
 }
 
 .home:hover{
-    background-color: #1e66d2;
+    background-color: hsl(216 75 47);
     transform: scale(1.025);
+}
+
+.search-container{
+    display: flex;
+    flex-direction: row;
+    gap: 5px;
+}
+
+.search-icon{
+    margin: 0;
+    padding: 0;
+    border: none;
+    background-color: hsl(216 91 53);
+    border-radius: 4px;
+    height: 32px;
+    width: 32px;
+}
+
+.search-icon:hover{
+    cursor: pointer;
+    background-color: hsl(216 75 47);
+    transform: scale(1.025);
+}
+
+.inputfield{
+    width: 240px;
+    box-sizing: border-box;
+    border: 1px solid rgb(255,255,255);
+    padding: 10px 10px 10px 10px;
+    border-radius: 4px;
+    color: white;
+    height: 32px;
+    background-color: rgb(30, 26, 41);
 }

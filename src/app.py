@@ -1,4 +1,4 @@
-from flask import Flask, flash, redirect, render_template, request, session, send_file
+from flask import flash, redirect, render_template, request, session, send_file
 import io
 from config import app
 from db_methods import *
@@ -168,12 +168,14 @@ def settings():
 def search():
     if(request.method == "POST"):
         query = request.form["query"]
+        if(query == ""):
+            return redirect("/search")
         return redirect(f"/search/{query}")
     query = ""
     users = findUsers(query)
     return render_template("search.html", query=query, users=users)
 
-@app.route("/search/<string:query>", methods=["GET", "POST"])
+@app.route("/search/<string:query>", methods=["GET"])
 def searched(query: str):
     users = findUsers(query)
     return render_template("search.html", query=query, users=users)

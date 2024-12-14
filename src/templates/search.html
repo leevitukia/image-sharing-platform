@@ -10,9 +10,11 @@
 <body>
     <a href="/" class="button home">Home</a>
 
-    <form method="POST" action="/search">
-        <input type="text" id="query" name="query" value="{{ query if query != None }}">
-        <button type="submit">Search</button>
+    <form class="search-container" method="POST" action="/search">
+        <input type="text" class="inputfield" id="query" name="query" value="{{ query if query != None }}">
+        <button class="search-icon" type="submit">
+            <img src="/static/google_search_icon.svg"/>
+        </button>
     </form>
 
     <div class="users">

@@ -16,11 +16,20 @@
     {% endif %}
 
     {% if user != loggedInUser %}
-    <a href="/messages/{{user}}" class="button">Message</a>
-    <form method="POST" action="/user/{{user}}">
-        <input type="hidden" id="csrf" name="csrf" value="{{session.csrf}}">
-        <button type="submit">{{ "Remove user from favorites" if favorited else "Add user to favorites" }}</button>
-    </form>
+    <div class="button-container">
+        <a href="/messages/{{user}}" class="button">Message</a>
+        <form method="POST" action="/user/{{user}}">
+            <input type="hidden" id="csrf" name="csrf" value="{{session.csrf}}">
+            <button class="star-icon" type="submit">
+                <div class="stars">
+                    <img src="/static/google_star_filledin.svg" class="star {{ "active" if favorited else "inactive" }}" height="32"/>
+                    <img src="/static/google_star.svg" class="star {{ "inactive" if favorited else "active" }}" height="32"/>
+                </div>
+            </button>
+
+        </form>
+    </div>
+    
 
     {% endif %}
         <div class="posts">

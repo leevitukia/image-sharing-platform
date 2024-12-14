@@ -10,22 +10,32 @@
 
     <a href="/" class="home">Home</a>
 
-    <form method="POST" action="/upload" enctype=multipart/form-data>
+    <form method="POST" class="fields" action="/upload" enctype=multipart/form-data>
 
-        <label for="file">Image</label><br>
-        <input type="file" id="file" name="file" required><br>
+        <div>
+          <label for="file">Image</label>
+          <input type="file" id="file" name="file" required hidden>
+          
+          <div class="uploadImage">
+            <img src="/static/google_add_photo.svg" class="upload" id="imagePreview" height="64" width="auto">
+          </div>
+        </div>
+        
 
-        <label for="description">Description</label><br>
-        <input type="text" id="description" name="description" required><br>
+        <div>
+          <label for="description">Description</label><br>
+          <input type="text" class="inputfield" id="description" name="description" required>
+        </div>
+        
         <input type="hidden" id="csrf" name="csrf" value="{{session.csrf}}">
 
         <button class="button" type="submit">Upload</button>
     </form>
 
     File Guidelines
-    <br>
+    
     Resolution: below 8192x8192
-    <br>
+    
     Format: can be anything that FFmpeg supports, but stick with JPEG, PNG, WEBP or JPEG-XL to be safe
 
     {% with messages = get_flashed_messages(with_categories=true) %}

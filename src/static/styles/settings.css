@@ -24,6 +24,28 @@ input[type="file"]{
     opacity: 80%;
 }
 
+form{
+    margin-top: 20vh;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.field{
+    display: flex;
+    flex-direction: column;
+}
+
+.inputfield{
+    width: 240px;
+    box-sizing: border-box;
+    border: 1px solid rgb(255,255,255);
+    padding: 10px 10px 10px 10px;
+    border-radius: 4px;
+    color: white;
+    background-color: rgb(30, 26, 41);
+}
+
 .home {
     background-color: #1870f4;
     border: 0px;
@@ -47,3 +69,24 @@ input[type="file"]{
     background-color: #1e66d2;
     transform: scale(1.025);
 }
+
+
+.button {
+    background-color: #1870f4;
+    border: 0px;
+    color: white;
+    font-weight: bold;
+    padding: 10px 16px;
+    text-align: center;
+    text-decoration: none;
+    font-size: 16px;
+    border-radius: 12px;
+    cursor: pointer;
+    width: auto;
+    transition: transform 0.1s, background-color 0.1s;
+}
+
+.button:hover{
+    background-color: #1e66d2;
+    transform: scale(1.025);
+} 
