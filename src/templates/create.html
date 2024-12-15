@@ -23,10 +23,12 @@
         <div class="button-container">
           <button class="button" id="submitButton" type="submit">Create Account</button>
         </div>
-        
     </form>
     </div>
-    
+
+    <div>
+      Already have an account? You can login <a href="/login">here</a>
+    </div>
 
     {% with messages = get_flashed_messages(with_categories=true) %}
       {% if messages %}
