@@ -4,7 +4,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Placeholder</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles/post.css') }}">
-    <link rel="preload" href="/post/{{postId}}.avif" as="image" type="image/avif">
+    <link rel="preload" href="/post/{{post_id}}.avif" as="image" type="image/avif">
 </head>
 
 <body>
@@ -18,10 +18,10 @@
                     {{user}}
                 </a>
             </div>
-            <img class="postImg" src="/post/{{postId}}.avif"/>
+            <img class="postImg" src="/post/{{post_id}}.avif"/>
             {{ description }}
             {% if user == loggedInUser %}
-            <form method="POST" action="/user/{{user}}/post/{{postId}}">
+            <form method="POST" action="/user/{{user}}/post/{{post_id}}">
                 <input type="hidden" id="delete" name="delete" value="delete">
                 <input type="hidden" id="csrf" name="csrf" value="{{session.csrf}}">
                 <button type="submit">Delete Post</button>
@@ -41,7 +41,7 @@
                     </div>
                 {% endfor %}
             </div>
-            <form class="commentField" method="POST" action="/user/{{user}}/post/{{postId}}">
+            <form class="commentField" method="POST" action="/user/{{user}}/post/{{post_id}}">
                 <input type="text" id="content" name="content" value="" required>
                 <input type="hidden" id="csrf" name="csrf" value="{{session.csrf}}">
                 <button type="submit">Comment</button>
