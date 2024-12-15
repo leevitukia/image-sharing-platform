@@ -12,7 +12,6 @@ body {
     height: 100%;
 }
 
-
 .messages::-webkit-scrollbar {
     display: none;
 }
@@ -43,26 +42,6 @@ body {
     gap: 10px;
 }
 
-.msgBox{
-    width: 85%;
-    box-sizing: border-box;
-    border: 1px solid rgb(255,255,255);
-    padding: 10px 10px 10px 10px;
-    border-radius: 4px;
-    color: white;
-    background-color: rgb(30, 26, 41);
-    resize: none;
-    overflow: auto;
-    font-family: Arial, sans-serif;
-    max-height: 200px;
-
-    -ms-overflow-style: none;
-    scrollbar-width: none; 
-}
-
-.msgBox::-webkit-scrollbar { 
-    display: none;
-}
 
 .recipient{
     background-color: hsl(200 6 90);
@@ -88,12 +67,37 @@ body {
     word-wrap: break-word;
 }
 
+.msgBox{
+    width: 400px;
+    box-sizing: border-box;
+    border: 1px solid rgb(255,255,255);
+    padding: 10px 10px 10px 10px;
+    border-radius: 4px;
+    color: white;
+    background-color: rgb(30, 26, 41);
+    resize: none;
+    overflow: auto;
+    font-family: Arial, sans-serif;
+    max-height: 200px;
+    height: 32px;
+    -ms-overflow-style: none;
+    scrollbar-width: none; 
+}
+
+.msgBox::-webkit-scrollbar { 
+    display: none;
+}
+.send{
+    max-width: fit-content;
+    margin-left: auto;
+    margin-right: auto;
+}
 .sendButton{
     background-color: rgb(30, 26, 41);
     border-radius: 5px;
     padding: 0;
-    width: 52px;
-    height: 52px;
+    width: 32px;
+    height: 32px;
     border: 1px solid rgb(255,255,255);
 }
 
