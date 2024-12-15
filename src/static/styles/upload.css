@@ -70,6 +70,18 @@ body {
     gap: 5px;
 }
 
+.descriptionBox{
+    display: flex;
+    flex-direction: row;
+    gap: 5px;
+}
+
+#descriptionLength {
+    justify-content: center; 
+    align-items: center;
+    display: none;
+}
+
 .uploadImage{
     background-color: hsl(248 19 18);
     height: 135px;

@@ -12,10 +12,15 @@
 
     <h1>{{ user + "'" if user.endswith('s') else user + "'s" }} Favorites</h1>
 
-    {% for favoriteUser in users %}
+    <div class="users">
+        {% for user in users %}
+        <div class="user">
+            <a href="/user/{{user}}" class="button">
+                <img src="/pfp/{{user}}.avif" width="48" height="auto"/>
+                {{user}}
+            </a>
+        </div>
+        {% endfor %}
+    </div>
 
-    <form action="/user/{{ favoriteUser }}" method="get">
-        <button class="button" type="submit">{{ favoriteUser }}</button>
-    </form>
-    {% endfor %}
 </body>

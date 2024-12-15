@@ -79,7 +79,7 @@ def remove_from_favorites(user: str, user_to_remove: str) -> None:
 def create_account(username: str, password: str) -> None:
     sql = text("INSERT INTO users (username, password, profilePicture) VALUES (:username, :password, :pfp) RETURNING id;")
     default_pfp: bytes = None
-    with open("static/defaultPfp.avif", "rb") as file:
+    with open("static/icons/defaultPfp.avif", "rb") as file:
         default_pfp = file.read()
 
     hashed_password = hash_password(password)

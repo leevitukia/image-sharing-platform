@@ -17,13 +17,15 @@
 
     {% if user != loggedInUser %}
     <div class="button-container">
-        <a href="/messages/{{user}}" class="button">Message</a>
+        <a href="/messages/{{user}}" class="button">
+            <img src="/static/icons/google_message.svg" height="24"/> Message
+        </a>
         <form method="POST" action="/user/{{user}}">
             <input type="hidden" id="csrf" name="csrf" value="{{session.csrf}}">
             <button class="star-icon" type="submit">
                 <div class="stars">
-                    <img src="/static/google_star_filledin.svg" class="star {{ "active" if favorited else "inactive" }}" height="32"/>
-                    <img src="/static/google_star.svg" class="star {{ "inactive" if favorited else "active" }}" height="32"/>
+                    <img src="/static/icons/google_star_filledin.svg" class="star {{ "" if favorited else "inactive" }}" height="32"/>
+                    <img src="/static/icons/google_star.svg" class="star {{ "inactive" if favorited else "active" }}" height="32"/>
                 </div>
             </button>
 

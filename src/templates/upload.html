@@ -4,29 +4,32 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Placeholder</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles/upload.css') }}">
+    <script src="{{url_for('static', filename='scripts/warning.js')}}"></script>
 </head>
 
 <body>
 
     <a href="/" class="home">Home</a>
 
-    <form method="POST" class="fields" action="/upload" enctype=multipart/form-data>
+    <form method="POST" class="fields" id="imageForm" action="/upload" enctype=multipart/form-data>
 
         <div>
           Image
-          <label for="file">
+          <label id="fileLabel" for="file" hidden>
             <div class="uploadImage" id="uploadImage">
-              <img src="/static/google_add_photo.svg" class="upload" id="imagePreview" height="64" width="auto">
+              <img src="/static/icons/google_add_photo.svg" class="upload" id="imagePreview" height="64" width="auto">
             </div>
           </label>
-          <input type="file" id="file" name="file" required hidden>
-          
-          
+          <input type="file" id="file" name="file" required>
         </div>
 
         <div>
           <label for="description">Description</label><br>
-          <input type="text" class="inputfield" id="description" name="description" required>
+          <div class="descriptionBox">
+            <input type="text" class="inputfield" id="description" name="description">
+            <div id="descriptionLength">0/300</div>
+          </div>
+          
         </div>
         
         <input type="hidden" id="csrf" name="csrf" value="{{session.csrf}}">
@@ -52,42 +55,4 @@
 
 </body>
 
-<script>
-  const preview = document.getElementById('imagePreview');
-  const container = document.getElementById("uploadImage");
-  let image = new Image();
-  document.getElementById('file').addEventListener('change', function(event) {
-  const file = event.target.files[0];
-  
-  
-  if (file) {
-      const reader = new FileReader(); 
-      reader.onload = function(e) {
-          image.src = e.target.result;
-          preview.src = e.target.result;
-          image.onload = function(){  
-            const w = 70;
-            const h = 45;
-            const viewportAspectRatio = w / h;
-            const imageAspectRatio = image.width / image.height;
-
-            let width = `${w}vh`;
-            let height = `${h}vh`;
-            
-
-            if(imageAspectRatio <= viewportAspectRatio){
-              width = `${h * imageAspectRatio}vh`;
-            }
-            else{
-              height = `${w / imageAspectRatio}vh`;
-            }
-            container.style.height = height;
-            container.style.width = width;
-            preview.style.height = height;
-            preview.style.width = width;
-          };
-      };
-      reader.readAsDataURL(file);
-  }
-});
-</script>
+<script src="{{url_for('static', filename='scripts/upload.js')}}"></script>

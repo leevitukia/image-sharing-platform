@@ -65,7 +65,7 @@ body {
 }
 
 .recipient{
-    background-color: rgb(30, 26, 41);
+    background-color: hsl(200 6 90);
     align-self: flex-start;
 }
 

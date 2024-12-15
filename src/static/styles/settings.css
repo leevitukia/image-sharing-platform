@@ -9,13 +9,9 @@ body {
     color: white;
 }
 
-input[type="file"]{
-    display: none;
-}
-
 .upload{
-    width: 64px;
-    height: 64px;
+    width: 96px;
+    height: 96px;
     object-fit: cover;
 }
 
@@ -33,11 +29,18 @@ form{
 
 .field{
     display: flex;
+    flex-direction: column; 
+}
+.fields{
+    display: flex;
     flex-direction: column;
+    gap: 5px;
 }
 
 .inputfield{
-    width: 240px;
+    width: 300px;
+    height: 40px;
+    font-size: 16px;
     box-sizing: border-box;
     border: 1px solid rgb(255,255,255);
     padding: 10px 10px 10px 10px;
@@ -84,6 +87,11 @@ form{
     cursor: pointer;
     width: auto;
     transition: transform 0.1s, background-color 0.1s;
+}
+
+label.field {
+    width: fit-content;
+    height: fit-content;
 }
 
 .button:hover{

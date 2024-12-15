@@ -7,17 +7,19 @@
 </head>
 
 <body>
-
     <a href="/" class="home">Home</a>
 
-    <form method="POST" action="/settings" enctype=multipart/form-data>
-        <div class="field">
-            <label class="field" for="file">Profile Picture
-                <img src="/pfp/{{username}}.avif" class="upload" id="imagePreview" width="64" height="auto">
+    <form method="POST" class="fields" action="/settings" enctype=multipart/form-data>
+        <div>
+            Profile Picture 
+            <label id="fileLabel" for="file" hidden>
+              <div class="uploadImage" id="uploadImage">
+                <img src="/pfp/{{username}}.avif" class="upload" id="imagePreview" height="96" width="auto">
+              </div>
             </label>
-            
-            <input type="file" id="file" name="file">
+            <input type="file" id="file" name="file" required>
         </div>
+
     
         <div class="field">
             <label for="username">Username</label>
@@ -29,17 +31,4 @@
 </body>
 
 
-<script>
-    document.getElementById('file').addEventListener('change', function(event) {
-    const file = event.target.files[0];
-    const preview = document.getElementById('imagePreview');
-    
-    if (file) {
-        const reader = new FileReader(); 
-        reader.onload = function(e) {
-            preview.src = e.target.result;
-        };
-        reader.readAsDataURL(file);
-    }
-});
-</script>
+<script src="{{url_for('static', filename='scripts/settings.js')}}"></script>

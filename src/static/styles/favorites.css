@@ -6,8 +6,13 @@ body {
     font-family: Arial, sans-serif;
     background-color: #121119;
     margin: 0; 
-    height: 50%; 
+    margin-top: 10px;
     color: white;
+}
+
+h1{
+    font-weight: normal;
+    font-size: 40;
 }
 
 .home {
@@ -32,4 +37,24 @@ body {
 .home:hover{
     background-color: #1e66d2;
     transform: scale(1.025);
+}
+
+.users{
+    display: flex;  
+    flex-direction: column;
+    margin: 0;
+    gap: 10px
+}
+
+.user{
+    font-size: 30;
+}
+
+.user a{
+    color: white;
+    text-decoration: inherit;
+}
+
+.user a:hover{
+    color: hsl(0 0 80);
 }

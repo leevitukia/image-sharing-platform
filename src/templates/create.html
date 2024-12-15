@@ -9,7 +9,7 @@
 <body>
     <h1>Create a new account</h1>
     <div>
-      <form method="POST" action="/signup">
+      <form method="POST" id="userForm" action="/signup">
         <div class="field">
           <label for="username">Username</label>
           <input type="text" class="inputfield" id="username" name="username" required>
@@ -20,7 +20,7 @@
         </div>
         
         <div class="button-container">
-          <button class="button" type="submit">Create Account</button>
+          <button class="button" id="submitButton" type="submit">Create Account</button>
         </div>
         
     </form>
@@ -38,3 +38,5 @@
     {% endwith %}
 </body>
 </html>
+
+<script src="{{url_for('static', filename='scripts/create.js')}}"></script>
