@@ -1,5 +1,5 @@
-from flask import Flask
 from os import getenv
+from flask import Flask
 from dotenv import load_dotenv
 from flask_sqlalchemy import SQLAlchemy
 
