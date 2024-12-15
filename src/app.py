@@ -38,7 +38,9 @@ def signup():
         if check_if_username_exists(username):
             flash("Username already taken, please choose a different one.", "danger")
             return redirect("/signup")
-
+        elif len(username) >= 35:
+            flash("Your username exceeds the maximum length, please choose one that's shorter than 35 characters.")
+            return redirect("/signup")
         user_id = create_account(username, password)
         session["userId"] = user_id
         session["csrf"] = secrets.token_hex(16)
@@ -122,17 +124,24 @@ def pfp(username):
 def upload():
     if request.method == "POST" and check_if_user_id_exists(session["userId"]) and validate_csrf_token(request.form):
         if 'file' not in request.files:
-            flash('No file')
-            return redirect(request.url)
+            flash("No file")
+            return redirect("/upload")
         file = request.files['file']
         img_bytes: bytes = file.stream.read()
 
         avif_image: bytes = process_image(img_bytes)
         if avif_image is None:
-            flash('Invalid file')
-            return redirect(request.url)
-        thumbnail = create_thumbnail(img_bytes)
+            flash("Invalid file")
+            return redirect("/upload")
+        
         description = request.form["description"]
+
+        if len(description) >= 300:
+            flash("Your description is too long, please keep it below 300 characters")
+            return redirect("/upload")
+
+        thumbnail = create_thumbnail(img_bytes)
+
         user_id = session["userId"]
         username = get_username(user_id)
 
