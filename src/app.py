@@ -92,7 +92,11 @@ def post(user, post_id):
             delete_post(post_id)
             return redirect(f"/user/{user}")
         elif "content" in request.form:
-            add_comment(request.form["content"], session["userId"], post_id)
+            comment = request.form["content"]
+            if len(comment) > 100:
+                flash("Your comment exceeded the max length of 100 characters")
+                return redirect(request.url)
+            add_comment(comment, session["userId"], post_id)
             return redirect(f"/user/{user}/post/{post_id}")
 
     description = get_description(post_id)
@@ -136,7 +140,7 @@ def upload():
         
         description = request.form["description"]
 
-        if len(description) >= 300:
+        if len(description) > 300:
             flash("Your description is too long, please keep it below 300 characters")
             return redirect("/upload")
 
@@ -158,8 +162,11 @@ def settings():
     username = get_username(user_id)
 
     if request.method == "POST" and validate_csrf_token(request.form):
-        new_username = request.form["username"]
-        if new_username != username and not check_if_username_exists(new_username):
+        new_username = request.form.get("username")
+        if new_username and new_username != username and not check_if_username_exists(new_username):
+            if len(new_username) >= 35:
+                flash("Your new username exceeds the maximum length, please choose one that's shorter than 35 characters.")
+                return redirect("/settings")
             change_username(user_id, new_username)
 
         if "file" in request.files:

@@ -8,32 +8,41 @@
 </head>
 
 <body>
-    <a href="/" class="button home">Home</a>
+    <a href="/" class="home">Home</a>
 
     <div class="postContainer">
+
         <div class="post">
             <div class="user">
-                <a href="/user/{{user}}" class="button">
+                <a href="/user/{{user}}">
                     <img src="/pfp/{{user}}.avif" width="32" height="32"/>
                     {{user}}
                 </a>
             </div>
-            <img class="postImg" src="/post/{{post_id}}.avif"/>
-            {{ description }}
-            {% if user == loggedInUser %}
-            <form method="POST" action="/user/{{user}}/post/{{post_id}}">
-                <input type="hidden" id="delete" name="delete" value="delete">
-                <input type="hidden" id="csrf" name="csrf" value="{{session.csrf}}">
-                <button type="submit">Delete Post</button>
-            </form>
-            {% endif %}
+            <div id="postContent">
+                <img id="postImg" src="/post/{{post_id}}.avif"/>
+                <div id="description">{{ description }}</div>
+                
+            </div>
+            <div id="postButtons">
+                {% if user == loggedInUser %}
+                <form method="POST" action="/user/{{user}}/post/{{post_id}}">
+                    <input type="hidden" id="delete" name="delete" value="delete">
+                    <input type="hidden" id="csrf" name="csrf" value="{{session.csrf}}">
+                    <button type="submit" class="delete">
+                        <img src="/static/icons/google_delete.svg" height="24"/> Delete Post
+                    </button>
+
+                </form>
+                {% endif %}
+            </div>
         </div>   
 
         <div class="comments">
-            <div class="commentsBox">
+            <div class="commentsBox" id="commentsBox">
                 {% for comment in comments%}
                     <div class="comment">
-                        <a href="/user/{{ comment.username }}" class="button">
+                        <a href="/user/{{ comment.username }}">
                             <img src="/pfp/{{ comment.username }}.avif" width="24" height="auto"/>
                             {{ comment.username }}
                         </a>
@@ -42,15 +51,22 @@
                 {% endfor %}
             </div>
             <form class="commentField" method="POST" action="/user/{{user}}/post/{{post_id}}">
-                <input type="text" id="content" name="content" value="" required>
+                <input type="text" class="inputfield" id="content" name="content" value="" required>
                 <input type="hidden" id="csrf" name="csrf" value="{{session.csrf}}">
-                <button type="submit">Comment</button>
+                <button class="button" type="submit">Comment</button>
             </form>
         </div>
     </div>
-    
 
-    <div class="comments">
-
-    </div>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <ul>
+          {% for category, message in messages %}
+            <li class="{{ category }}">{{ message }}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}
 </body> 
+
+<script src="{{url_for('static', filename='scripts/post.js')}}"></script>

@@ -11,14 +11,14 @@ const preview = document.getElementById('imagePreview');
 const container = document.getElementById("uploadImage");
 
 document.getElementById("imageForm").addEventListener('submit', function(event) {
-  const attached = fileElement.value !== '';
-  const description = descriptionElement.value;
+  let attached = fileElement.value !== '';
+  let description = descriptionElement.value;
   if(!attached){
     showWarning("Please select an image to upload");
     event.preventDefault();
     return false;
   }
-  else if(description.length >= 300){
+  else if(description.length > 300){
     showWarning("Your description is too long, please keep it below 300 characters");
     event.preventDefault();
     return false;

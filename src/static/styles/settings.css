@@ -89,12 +89,12 @@ form{
     transition: transform 0.1s, background-color 0.1s;
 }
 
-label.field {
-    width: fit-content;
-    height: fit-content;
-}
-
 .button:hover{
     background-color: #1e66d2;
     transform: scale(1.025);
 } 
+
+label.field {
+    width: fit-content;
+    height: fit-content;
+}

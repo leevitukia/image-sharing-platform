@@ -1,12 +1,13 @@
 let usernameField = document.getElementById("username")
 
 document.getElementById("userForm").addEventListener('submit', function(event) {
-  let username = usernameField.value;
-  if(username.length >= 35){
-      event.preventDefault();
-      return false;
-  }
-  return true;
+    let username = usernameField.value;
+    if(username.length >= 35){
+        showWarning("Your username exceeds the maximum length, please choose one that's shorter than 35 characters.");
+        event.preventDefault();
+        return false;
+    }
+    return true;
 });
 
 let originalColor = usernameField.style.backgroundColor;

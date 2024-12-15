@@ -17,17 +17,27 @@
                 <img src="/pfp/{{username}}.avif" class="upload" id="imagePreview" height="96" width="auto">
               </div>
             </label>
-            <input type="file" id="file" name="file" required>
+            <input type="file" id="file" name="file">
         </div>
 
     
         <div class="field">
             <label for="username">Username</label>
-            <input class="inputfield" type="text" id="username" name="username" value="{{username}}" required>
+            <input class="inputfield" type="text" id="username" name="username" value="{{username}}">
         </div>
         <input type="hidden" id="csrf" name="csrf" value="{{session.csrf}}">
         <button class="button" type="submit">Save Changes</button>
     </form>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <ul>
+          {% for category, message in messages %}
+            <li class="{{ category }}">{{ message }}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}
 </body>
 
 

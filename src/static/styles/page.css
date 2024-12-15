@@ -9,13 +9,6 @@ body {
     color: white;
 }
 
-/*.posts-container{
-    display: flex;  
-    justify-items: center;
-    align-items: center;
-    max-width: 100%;
-}*/
-
 .posts{
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(192px, 1fr));
