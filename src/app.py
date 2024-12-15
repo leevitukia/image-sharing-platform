@@ -211,6 +211,9 @@ def conversation(recipient_user_id: str):
 
     if request.method == "POST" and validate_csrf_token(request.form):
         message = request.form["msgBox"]
+        if len(message) > 3000:
+            flash("Your message exceeded the max length of 3000 character")
+            return redirect(request.url)
         send_message(message, user_id, recipient_user_id)
         return redirect(f"/messages/{recipient_user_id}")
 

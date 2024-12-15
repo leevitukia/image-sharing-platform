@@ -87,6 +87,9 @@ body {
 .msgBox::-webkit-scrollbar { 
     display: none;
 }
+.warning{
+    color: white;
+}
 .send{
     max-width: fit-content;
     margin-left: auto;
