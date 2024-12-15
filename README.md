@@ -10,8 +10,6 @@
 - Users can attach a caption/description to their images: Done
 - Users can comment on posts: Done
 - Users can message other users: Done
-- Users can like posts: Not implemented
-- Good looking UI: absolutely not done
 
 ###  How to test the app (Tested on Ubuntu 24.04)
 1. Clone the repo
